@@ -1,0 +1,39 @@
+{
+  "manifest_version": 3,
+  "name": "Web2MD-FeedAI - AI 网页转 Markdown",
+  "description": "一键转换网页选区或整页为专为 AI 优化的高质量 Markdown，支持右侧原生边栏、一键复制与 Token 统计。",
+  "version": "1.0.0",
+  "permissions": [
+    "activeTab",
+    "storage",
+    "sidePanel",
+    "contextMenus",
+    "scripting"
+  ],
+  "action": {
+    "default_title": "打开 Web2MD-FeedAI 侧边栏"
+  },
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "css": ["content.css"],
+      "run_at": "document_idle",
+      "all_frames": true,
+      "match_about_blank": true
+    }
+  ],
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

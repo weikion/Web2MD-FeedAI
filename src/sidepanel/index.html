@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Web2MD-FeedAI 侧边栏</title>
+  <link rel="stylesheet" href="sidepanel.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Top Header -->
+    <header class="app-header">
+      <div class="brand">
+        <div class="logo-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-name">Web2MD-FeedAI</span>
+          <span class="brand-tag">AI Ready</span>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <div class="lang-selector-wrap" title="Switch Language / 切换语言">
+          <svg class="lang-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="2" y1="12" x2="22" y2="12"></line>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+          </svg>
+          <select id="lang-select">
+            <option value="zh-CN">简体中文</option>
+            <option value="en">English</option>
+            <option value="zh-TW">繁體中文</option>
+            <option value="ja">日本語</option>
+            <option value="ru">Русский</option>
+          </select>
+        </div>
+
+        <div class="page-meta" id="page-meta-badge" title="当前页面">
+          <span class="page-dot"></span>
+          <span class="page-title-text" id="active-page-title">检测中...</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Mode Selector Tabs -->
+    <div class="mode-tabs-container">
+      <div class="mode-tabs">
+        <button class="tab-btn active" data-mode="selection" id="tab-selection">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M7 2v4m10-4v4M3 8h18M4 11h16v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8z"></path>
+          </svg>
+          <span data-i18n="tab_selection">选区内容</span>
+        </button>
+        <button class="tab-btn" data-mode="article" id="tab-article">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+          </svg>
+          <span data-i18n="tab_article">智能正文</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Toolbar: Options & Stats -->
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <label class="toggle-control" id="toggle-frontmatter-label">
+          <input type="checkbox" id="toggle-frontmatter">
+          <span class="toggle-slider"></span>
+          <span class="toggle-label" data-i18n="ai_meta">AI 元信息</span>
+        </label>
+      </div>
+
+      <div class="toolbar-right">
+        <div class="stats-badge" id="stats-badge">
+          <span id="char-count">0 字符</span>
+          <span class="stats-sep">·</span>
+          <span id="token-count">~0 Tokens</span>
+        </div>
+        <div class="view-switch">
+          <button class="view-btn active" id="view-raw" data-i18n="view_raw">Raw</button>
+          <button class="view-btn" id="view-preview" data-i18n="view_preview">预览</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Editor View -->
+      <div class="editor-wrap" id="editor-wrap">
+        <textarea id="markdown-editor" placeholder="选区转换结果或整页正文将在此显示，支持直接编辑..."></textarea>
+      </div>
+
+      <!-- Preview View -->
+      <div class="preview-wrap hidden" id="preview-wrap">
+        <div class="markdown-preview" id="markdown-preview"></div>
+      </div>
+
+      <!-- Empty State View -->
+      <div class="empty-state hidden" id="empty-state">
+        <div class="empty-icon">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="9" y1="15" x2="15" y2="15"></line>
+          </svg>
+        </div>
+        <h3 data-i18n="empty_title">当前尚未捕获内容</h3>
+        <p data-i18n="empty_desc">在任意网页划选文本后即可实时捕获；<br>或点击上方<b>「智能正文」</b>一键提取文章。</p>
+      </div>
+    </main>
+
+    <!-- Footer Actions -->
+    <footer class="app-footer">
+      <div class="footer-actions">
+        <button class="btn-action" id="btn-refresh">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M23 4v6h-6"></path>
+            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+          </svg>
+          <span data-i18n="btn_refresh">刷新</span>
+        </button>
+
+        <button class="btn-action btn-action-clear" id="btn-clear">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+          </svg>
+          <span data-i18n="btn_clear">清空</span>
+        </button>
+
+        <button class="btn-action" id="btn-download">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          <span data-i18n="btn_download">导出</span>
+        </button>
+
+        <button class="btn-copy-main" id="btn-copy">
+          <span class="btn-copy-icon">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+          </span>
+          <span class="btn-copy-text" id="copy-btn-text" data-i18n="btn_copy">一键复制</span>
+        </button>
+      </div>
+    </footer>
+  </div>
+
+  <script type="module" src="sidepanel.js"></script>
+</body>
+</html>
