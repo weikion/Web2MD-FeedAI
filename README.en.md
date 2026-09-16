@@ -10,8 +10,8 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Chrome-Manifest_V3-4285F4?logo=googlechrome&logoColor=white" alt="Manifest V3">
-  <img src="https://img.shields.io/badge/Version-1.0.0-00C7B7" alt="Version">
-  <img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License">
+  <img src="https://img.shields.io/badge/Version-1.0.1-00C7B7" alt="Version">
+  <img src="https://img.shields.io/badge/License-Apache--2.0-blue.svg" alt="License">
   <img src="https://img.shields.io/badge/PRs-Welcome-brightgreen.svg" alt="PRs Welcome">
 </p>
 
@@ -52,6 +52,7 @@
   - Automatically detects code block language (Python, JavaScript, Go, JSON, etc.) and strips line number noise.
   - Automatically resolves relative URLs and images to full absolute URLs to prevent 404s when AI verifies sources.
   - Preserves LaTeX / KaTeX / MathJax math formulas (`$formula$` / `$$formula$$`).
+  - **Smart Native Markdown Awareness**: If the selected content is already in Markdown format (e.g. inside code blocks, AI chat raw responses, plain markdown text, or `.md` files), the original formatting is directly preserved without redundant escaping or re-conversion.
 
 - 📊 **Universal Complex Table Compatibility**:
   - Full support for Slate.js, Tencent Cloud API docs, and other modern tables lacking `<thead>` or using `<td class="is-header">`.
@@ -85,7 +86,7 @@
 ## 🚀 Installation & Usage (Chrome / Edge)
 
 ### 1. Install from GitHub Release
-1. Visit the [Releases](../../releases) page and download `Web2MD-FeedAI-v1.0.0.zip`.
+1. Visit the [Releases](../../releases) page and download `Web2MD-FeedAI-v1.0.1.zip`.
 2. Open Chrome and navigate to `chrome://extensions/` (or `edge://extensions/` for Edge).
 3. Enable **"Developer mode"** in the top-right corner.
 4. Extract the ZIP file and click **"Load unpacked"**, then select the unzipped directory.

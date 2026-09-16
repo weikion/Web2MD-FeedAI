@@ -7,6 +7,8 @@ let currentMode = 'selection'; // 'selection' | 'article'
 let currentActiveTab = null;
 let rawHtmlCache = {
   selectionHtml: '',
+  selectionText: '',
+  selectionIsMarkdown: false,
   pageHtml: '',
   articleHtml: ''
 };
@@ -87,15 +89,17 @@ function connectToBackground() {
  * Automatically display incoming selection content when sidepanel is already open
  */
 function handleIncomingSelection(data) {
-  if (!data || !data.html) return;
+  if (!data || (!data.html && !data.text)) return;
 
   // Auto switch to selection tab
   currentMode = 'selection';
   tabSelection.classList.add('active');
   tabArticle.classList.remove('active');
 
-  // Cache selection HTML
-  rawHtmlCache.selectionHtml = data.html;
+  // Cache selection HTML, text, and markdown detection status
+  rawHtmlCache.selectionHtml = data.html || '';
+  rawHtmlCache.selectionText = data.text || '';
+  rawHtmlCache.selectionIsMarkdown = !!data.isMarkdown;
 
   // Update page info if available
   if (data.title) pageInfo.title = data.title;
@@ -339,8 +343,10 @@ async function fetchContentForCurrentMode(force = false) {
         if (resp.url) pageInfo.url = resp.url;
         updateTitleBadge(pageInfo.title, pageInfo.url);
 
-        if (resp.html) {
-          rawHtmlCache.selectionHtml = resp.html;
+        if (resp.html || resp.text) {
+          rawHtmlCache.selectionHtml = resp.html || '';
+          rawHtmlCache.selectionText = resp.text || '';
+          rawHtmlCache.selectionIsMarkdown = !!resp.isMarkdown;
           regenerateMarkdown();
         } else if (force || !editor.value.trim()) {
           toggleEmptyState(true);
@@ -371,22 +377,29 @@ async function fetchContentForCurrentMode(force = false) {
  */
 function regenerateMarkdown() {
   let sourceHtml = '';
+  let sourceText = '';
+  let isMd = false;
+
   if (currentMode === 'selection') {
     sourceHtml = rawHtmlCache.selectionHtml;
+    sourceText = rawHtmlCache.selectionText;
+    isMd = !!rawHtmlCache.selectionIsMarkdown;
   } else {
     sourceHtml = rawHtmlCache.articleHtml || rawHtmlCache.pageHtml;
   }
 
-  if (!sourceHtml) {
+  if (!sourceHtml && !sourceText) {
     if (!editor.value.trim()) toggleEmptyState(true);
     return;
   }
 
-  const markdown = htmlToMarkdown(sourceHtml, {
+  const markdown = htmlToMarkdown(sourceHtml || sourceText, {
     baseUrl: pageInfo.url,
     title: pageInfo.title,
     sourceUrl: pageInfo.url,
-    includeMetadata: toggleFrontmatter.checked
+    includeMetadata: toggleFrontmatter.checked,
+    rawText: sourceText,
+    isMarkdown: isMd
   });
 
   setMarkdownContent(markdown);

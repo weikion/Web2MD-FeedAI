@@ -10,8 +10,8 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Chrome-Manifest_V3-4285F4?logo=googlechrome&logoColor=white" alt="Manifest V3">
-  <img src="https://img.shields.io/badge/Version-1.0.0-00C7B7" alt="Version">
-  <img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License">
+  <img src="https://img.shields.io/badge/Version-1.0.1-00C7B7" alt="Version">
+  <img src="https://img.shields.io/badge/License-Apache--2.0-blue.svg" alt="License">
   <img src="https://img.shields.io/badge/PRs-Welcome-brightgreen.svg" alt="PRs Welcome">
 </p>
 
@@ -52,6 +52,7 @@
   - 自动推断代码块语言（如 `python`、`javascript`、`json` 等），智能过滤行号干扰。
   - 自动将相对 URL 和图片地址转为完整绝对链接，防止 AI 查证丢图、丢链接。
   - 完整保留 LaTeX / KaTeX / MathJax 数学公式语法（`$formula$` / `$$formula$$`）。
+  - **智能原生 Markdown 感知**：若已划选内容本身已是 Markdown 格式（如代码块内、AI 响应源码、原生 Markdown 文本或 `.md` 文件），自动保留原始格式，无需也不再进行二次转义。
 
 - 📊 **非标准复杂表格全自适应兼容**：
   - 深度兼容 Slate.js、腾讯云 API 文档等没有 `<thead>` 或首行使用 `<td class="is-header">` 的非标准表格。
@@ -85,7 +86,7 @@
 ## 🚀 安装使用指南（Chrome / Edge）
 
 ### 1. 从发布包直接安装
-1. 前往 GitHub 仓库的 [Releases](../../releases) 页面，下载最新的 `Web2MD-FeedAI-v1.0.0.zip`；
+1. 前往 GitHub 仓库的 [Releases](../../releases) 页面，下载最新的 `Web2MD-FeedAI-v1.0.1.zip`；
 2. 打开 Chrome 浏览器，访问扩展管理页面：`chrome://extensions/`（Edge 访问：`edge://extensions/`）；
 3. 开启右上角 **“开发者模式 (Developer mode)”** 开关；
 4. 将下载的 ZIP 解压，点击 **“加载已解压的扩展程序 (Load unpacked)”** 并选择解压出的文件夹；

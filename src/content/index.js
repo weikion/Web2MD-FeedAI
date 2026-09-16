@@ -1,4 +1,4 @@
-import { htmlToMarkdown } from '../utils/html2md.js';
+import { htmlToMarkdown, isInsideMarkdownCodeBlock, isInsideNonMarkdownCodeBlock, isAlreadyMarkdown } from '../utils/html2md.js';
 import { extractArticle } from '../utils/readability.js';
 import { countTokensAndChars } from '../utils/token.js';
 import { t, setLocale, detectDefaultLocale } from '../utils/i18n.js';
@@ -35,7 +35,7 @@ function getHtmlTitle() {
 }
 
 /**
- * Get current selection HTML and plain text
+ * Get current selection HTML, plain text, and markdown detection status
  */
 function getSelectionData() {
   const selection = window.getSelection();
@@ -48,7 +48,8 @@ function getSelectionData() {
       text: '',
       title: pageTitle,
       url: pageUrl,
-      hasSelection: false
+      hasSelection: false,
+      isMarkdown: false
     };
   }
 
@@ -56,15 +57,44 @@ function getSelectionData() {
   const container = document.createElement('div');
   container.appendChild(range.cloneContents());
 
-  const rawText = selection.toString().trim();
+  // Clean line numbers if any
+  const lineNumbers = container.querySelectorAll('.line-numbers, .hljs-ln-numbers, .gutter, .linenumber');
+  const hasLineNumbers = lineNumbers.length > 0;
+  if (hasLineNumbers) {
+    lineNumbers.forEach(el => el.remove());
+  }
+
+  const rawText = hasLineNumbers ? container.textContent.trim() : selection.toString().trim();
   if (!rawText) {
     return {
       html: '',
       text: '',
       title: pageTitle,
       url: pageUrl,
-      hasSelection: false
+      hasSelection: false,
+      isMarkdown: false
     };
+  }
+
+  // Detect whether the selected content is already in Markdown format
+  let isMarkdown = false;
+  let ancestor = range.commonAncestorContainer;
+  if (ancestor && ancestor.nodeType === 3) {
+    ancestor = ancestor.parentElement;
+  }
+
+  if (isInsideMarkdownCodeBlock(ancestor)) {
+    isMarkdown = true;
+  } else if (!isInsideNonMarkdownCodeBlock(ancestor)) {
+    const isMdPage = (typeof document !== 'undefined' && document.contentType === 'text/markdown') ||
+                     /\.(md|markdown)(\?.*)?$/i.test(window.location.pathname) ||
+                     (window.location.hostname === 'raw.githubusercontent.com' && /\.(md|markdown)$/i.test(window.location.pathname));
+
+    if (isMdPage) {
+      isMarkdown = true;
+    } else {
+      isMarkdown = isAlreadyMarkdown(rawText, container);
+    }
   }
 
   return {
@@ -72,7 +102,8 @@ function getSelectionData() {
     text: rawText,
     title: pageTitle,
     url: pageUrl,
-    hasSelection: true
+    hasSelection: true,
+    isMarkdown: isMarkdown
   };
 }
 
@@ -163,7 +194,9 @@ async function convertSelectionAndCopy(includeMetadata) {
     baseUrl: data.url,
     title: data.title,
     sourceUrl: data.url,
-    includeMetadata: useMetadata
+    includeMetadata: useMetadata,
+    rawText: data.text,
+    isMarkdown: data.isMarkdown
   });
 
   const stats = countTokensAndChars(markdown);
@@ -328,7 +361,9 @@ function showFloatingButton(rect) {
         const md = htmlToMarkdown(data.html, {
           baseUrl: data.url,
           title: data.title,
-          sourceUrl: data.url
+          sourceUrl: data.url,
+          rawText: data.text,
+          isMarkdown: data.isMarkdown
         });
         await chrome.storage.local.set({
           latestMarkdown: md,

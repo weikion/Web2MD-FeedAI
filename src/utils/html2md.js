@@ -279,6 +279,187 @@ export function normalizeMarkdownTables(md) {
   return result.join('\n');
 }
 
+
+/**
+ * Detect if an element or selection is within an explicit Markdown code block
+ */
+export function isInsideMarkdownCodeBlock(node) {
+  if (!node) return false;
+  let el = (node.nodeType === 3 /* Node.TEXT_NODE */) ? node.parentElement : node;
+  while (el && el.tagName !== 'BODY' && el.tagName !== 'HTML') {
+    const className = (typeof el.className === 'string') ? el.className : (el.getAttribute ? (el.getAttribute('class') || '') : '');
+    if (/(?:^|\s)(?:language|lang|hljs)-(?:markdown|md)(?:\s|$)/i.test(className)) {
+      return true;
+    }
+    const dataLang = el.getAttribute ? (el.getAttribute('data-lang') || el.getAttribute('data-language') || '') : '';
+    if (/^(?:markdown|md)$/i.test(dataLang.trim())) {
+      return true;
+    }
+    el = el.parentElement;
+  }
+  return false;
+}
+
+/**
+ * Detect if an element or selection is within a code block of a non-markdown programming language
+ */
+export function isInsideNonMarkdownCodeBlock(node) {
+  if (!node) return false;
+  let el = (node.nodeType === 3 /* Node.TEXT_NODE */) ? node.parentElement : node;
+  while (el && el.tagName !== 'BODY' && el.tagName !== 'HTML') {
+    const className = (typeof el.className === 'string') ? el.className : (el.getAttribute ? (el.getAttribute('class') || '') : '');
+    const match = className.match(/(?:^|\s)(?:language|lang|hljs)-([a-zA-Z0-9_\-#+]+)(?:\s|$)/i);
+    if (match) {
+      const lang = match[1].toLowerCase();
+      if (lang !== 'markdown' && lang !== 'md') {
+        return true;
+      }
+    }
+    const dataLang = el.getAttribute ? (el.getAttribute('data-lang') || el.getAttribute('data-language') || '') : '';
+    if (dataLang.trim()) {
+      const lang = dataLang.trim().toLowerCase();
+      if (lang !== 'markdown' && lang !== 'md') {
+        return true;
+      }
+    }
+    el = el.parentElement;
+  }
+  return false;
+}
+
+/**
+ * Check if the text content exhibits clear Markdown syntax characteristics
+ */
+export function isMarkdownText(text) {
+  if (!text || typeof text !== 'string') return false;
+  const trimmed = text.trim();
+  if (!trimmed) return false;
+
+  // 1. YAML Frontmatter
+  if (/^---\r?\n[\s\S]+?\r?\n---/.test(trimmed)) {
+    return true;
+  }
+
+  // 2. Fenced code block (``` or ~~~)
+  if (/(?:^|\n)```[a-zA-Z0-9_\-#+]*\s*\n[\s\S]*?\n```/.test(trimmed) || /^```[\s\S]*?```$/.test(trimmed)) {
+    return true;
+  }
+
+  // 3. Markdown table (header row with | followed by separator row | --- |)
+  if (/\|[^\n]+\|\r?\n\|(?:\s*:?---+:?\s*\|)+/.test(trimmed)) {
+    return true;
+  }
+
+  // 4. Markdown links or images: [text](url) or ![alt](url)
+  if (/(?:^|[^\\])!?\[[^\]\n]{1,200}\]\((?:https?:\/\/[^\s)]+|\/[^\s)]+|#[^\s)]+)\)/.test(trimmed)) {
+    return true;
+  }
+
+  // 5. Task list items: - [ ] or - [x]
+  if (/(?:^|\n)\s*[-*+]\s+\[[ xX]\]\s+\S+/.test(trimmed)) {
+    return true;
+  }
+
+  // Check for typical programming language code to avoid false positives on Python/Shell comments etc.
+  const looksLikeCode = /(?:^|\n)\s*(?:def\s+\w+|function\s*\(|class\s+\w+|import\s+[\w{}*]+|export\s+(?:default|const|let|var|function)|const\s+\w+\s*=|let\s+\w+\s*=|var\s+\w+\s*=|return\s+[\w'"({]|public\s+(?:static\s+)?void|package\s+\w+)/.test(trimmed);
+
+  // Score structural markdown elements
+  let score = 0;
+
+  // ATX Headings: # Header (only if not typical programming code)
+  if (/(?:^|\n)#{1,6}\s+\S+/.test(trimmed)) {
+    if (!looksLikeCode) {
+      score += 2;
+    }
+  }
+
+  // Bold or strikethrough: **bold** or ~~strike~~
+  if (/(?:^|[^\\])\*\*(?!\s)[^\n]+?(?<!\s)\*\*/.test(trimmed) || /(?:^|[^\\])~~(?!\s)[^\n]+?(?<!\s)~~/.test(trimmed)) {
+    score += 1.5;
+  }
+
+  // Blockquote: > quote
+  if (/(?:^|\n)>\s+\S+/.test(trimmed)) {
+    score += 1.5;
+  }
+
+  // Bullet list with multiple items (e.g. - item 1\n- item 2)
+  if (/(?:^|\n)\s*[-*+]\s+\S+[\s\S]*?\n\s*[-*+]\s+\S+/.test(trimmed)) {
+    score += 2;
+  } else if (/(?:^|\n)\s*[-*+]\s+\S+/.test(trimmed) && !looksLikeCode) {
+    score += 1;
+  }
+
+  // Numbered list with multiple items
+  if (/(?:^|\n)\s*\d+\.\s+\S+[\s\S]*?\n\s*\d+\.\s+\S+/.test(trimmed)) {
+    score += 2;
+  } else if (/(?:^|\n)\s*\d+\.\s+\S+/.test(trimmed)) {
+    score += 1;
+  }
+
+  // Inline code: `code`
+  if (/(?:^|[^\\])`[^`\n]{1,80}`(?:$|[^\\])/.test(trimmed)) {
+    score += 1;
+  }
+
+  // Horizontal rule: --- or ***
+  if (/(?:^|\n)(?:---|\*\*\*|___)\s*$/m.test(trimmed)) {
+    score += 1;
+  }
+
+  return score >= 2;
+}
+
+/**
+ * Check if a container contains rich rendered HTML elements (outside pre/code),
+ * indicating that it is a rendered webpage rather than already markdown.
+ */
+export function hasRichHtmlElements(container) {
+  if (!container) return false;
+  let el = container;
+  if (typeof container === 'string') {
+    if (!/<[a-z][\s\S]*>/i.test(container)) return false;
+    if (typeof DOMParser !== 'undefined') {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(container, 'text/html');
+      el = doc.body;
+    } else {
+      return false;
+    }
+  }
+  if (!el || !el.querySelectorAll) return false;
+
+  const richElements = el.querySelectorAll('h1, h2, h3, h4, h5, h6, table, ul, ol, dl, hr, blockquote, a[href], img[src]');
+  for (let i = 0; i < richElements.length; i++) {
+    const item = richElements[i];
+    if (item.closest && !item.closest('pre, code')) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Determine whether content is already in Markdown format and does not require HTML-to-Markdown conversion
+ */
+export function isAlreadyMarkdown(text, htmlOrElement, options = {}) {
+  if (options && options.isMarkdown !== undefined) {
+    return !!options.isMarkdown;
+  }
+
+  // If container has rich rendered HTML elements (headings, tables, links outside pre/code),
+  // it should be converted from HTML to Markdown.
+  if (htmlOrElement && hasRichHtmlElements(htmlOrElement)) {
+    return false;
+  }
+
+  const rawText = (typeof text === 'string' && text) ? text :
+                  (htmlOrElement && typeof htmlOrElement !== 'string' && htmlOrElement.textContent) ? htmlOrElement.textContent :
+                  (typeof htmlOrElement === 'string' && !/<[a-z][\s\S]*>/i.test(htmlOrElement)) ? htmlOrElement : '';
+
+  return isMarkdownText(rawText);
+}
+
 /**
  * Main function to convert HTML string or DOM element to Markdown
  */
@@ -287,7 +468,9 @@ export function htmlToMarkdown(htmlOrElement, options = {}) {
     baseUrl = (typeof window !== 'undefined' ? window.location.href : ''),
     includeMetadata = false,
     title = '',
-    sourceUrl = ''
+    sourceUrl = '',
+    rawText = '',
+    isMarkdown = undefined
   } = options;
 
   let container;
@@ -299,18 +482,27 @@ export function htmlToMarkdown(htmlOrElement, options = {}) {
     container = htmlOrElement;
   }
 
-  const processedElement = preprocessElement(container, baseUrl);
-  const turndown = createTurndownService();
-  let markdown = turndown.turndown(processedElement);
+  // Check if content is already in Markdown format (no need to convert with Turndown)
+  const alreadyMd = isMarkdown === true || (isMarkdown === undefined && isAlreadyMarkdown(rawText || (container ? container.textContent : ''), container, options));
+
+  let markdown = '';
+
+  if (alreadyMd) {
+    markdown = (rawText || (container ? container.textContent : (typeof htmlOrElement === 'string' ? htmlOrElement : ''))).trim();
+  } else {
+    const processedElement = preprocessElement(container, baseUrl);
+    const turndown = createTurndownService();
+    markdown = turndown.turndown(processedElement);
+  }
 
   // Normalize broken table lines into valid GFM tables
   markdown = normalizeMarkdownTables(markdown);
 
   // Clean excessive empty lines (more than 2 consecutive newlines)
-  markdown = markdown.replace(/\n{3,}/g, '\n\n').trim();
+  markdown = markdown.replace(/\r\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
 
-  // Add AI metadata frontmatter if requested
-  if (includeMetadata && (title || sourceUrl)) {
+  // Add AI metadata frontmatter if requested and not already present
+  if (includeMetadata && (title || sourceUrl) && !/^---\r?\n[\s\S]+?\r?\n---/m.test(markdown)) {
     const lines = [
       '---',
       title ? `title: "${title.replace(/"/g, '\\"')}"` : '',

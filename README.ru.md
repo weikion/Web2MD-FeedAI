@@ -10,8 +10,8 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Chrome-Manifest_V3-4285F4?logo=googlechrome&logoColor=white" alt="Manifest V3">
-  <img src="https://img.shields.io/badge/Version-1.0.0-00C7B7" alt="Version">
-  <img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License">
+  <img src="https://img.shields.io/badge/Version-1.0.1-00C7B7" alt="Version">
+  <img src="https://img.shields.io/badge/License-Apache--2.0-blue.svg" alt="License">
   <img src="https://img.shields.io/badge/PRs-Welcome-brightgreen.svg" alt="PRs Welcome">
 </p>
 
@@ -52,6 +52,7 @@
   - Автоопределение языка блоков кода (Python, JavaScript, Go, JSON и т.д.) с фильтрацией номеров строк.
   - Преобразование относительных ссылок и изображений в полные абсолютные URL.
   - Сохранение математических формул LaTeX / KaTeX / MathJax (`$formula$` / `$$formula$$`).
+  - **Интеллектуальное распознавание Markdown**: если выделенный контент уже находится в формате Markdown (внутри блоков кода, исходных ответах AI или `.md` файлах), исходный формат сохраняется напрямую без повторного экранирования и искажения.
 
 - 📊 **Полная совместимость со сложными таблицами**:
   - Поддержка таблиц Slate.js, облачной документации и страниц без `<thead>` или с ячейками `<td class="is-header">`.
@@ -84,7 +85,7 @@
 ## 🚀 Установка и запуск (Chrome / Edge)
 
 ### 1. Установка из готового архива GitHub Release
-1. Перейдите на страницу [Releases](../../releases) и загрузите `Web2MD-FeedAI-v1.0.0.zip`.
+1. Перейдите на страницу [Releases](../../releases) и загрузите `Web2MD-FeedAI-v1.0.1.zip`.
 2. Откройте Chrome и перейдите в `chrome://extensions/` (или `edge://extensions/` в Edge).
 3. Включите **«Режим разработчика»** в правом верхнем углу.
 4. Распакуйте архив, нажмите **«Загрузить распакованное расширение»** и выберите папку.
