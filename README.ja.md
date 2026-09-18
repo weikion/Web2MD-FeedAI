@@ -5,12 +5,12 @@
 </p>
 
 <p align="center">
-  <a href="./README.md">简体中文</a> | <a href="./README.en.md">English</a> | <a href="./README.zh-TW.md">繁體中文</a> | <b>日本語</b> | <a href="./README.ru.md">Русский</a>
+  <a href="./README.md">English</a> | <a href="./README.zh-CN.md">简体中文</a> | <a href="./README.zh-TW.md">繁體中文</a> | <b>日本語</b> | <a href="./README.ru.md">Русский</a>
 </p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Chrome-Manifest_V3-4285F4?logo=googlechrome&logoColor=white" alt="Manifest V3">
-  <img src="https://img.shields.io/badge/Version-1.0.1-00C7B7" alt="Version">
+  <img src="https://img.shields.io/badge/Version-1.2.1-00C7B7" alt="Version">
   <img src="https://img.shields.io/badge/License-Apache--2.0-blue.svg" alt="License">
   <img src="https://img.shields.io/badge/PRs-Welcome-brightgreen.svg" alt="PRs Welcome">
 </p>
@@ -85,7 +85,7 @@
 ## 🚀 インストール＆利用ガイド（Chrome / Edge）
 
 ### 1. GitHub Releasesからインストール
-1. [Releases](../../releases) ページから最新の `Web2MD-FeedAI-v1.0.1.zip` をダウンロードします。
+1. [Releases](../../releases) ページから最新の `Web2MD-FeedAI-v1.2.1.zip` をダウンロードします。
 2. Chromeを開き、拡張機能管理ページ（`chrome://extensions/`）へアクセスします。
 3. 右上の **「デベロッパーモード」** をオンにします。
 4. ZIPを解凍し、**「パッケージ化されていない拡張機能を読み込む」** をクリックして解凍したフォルダを選択します。

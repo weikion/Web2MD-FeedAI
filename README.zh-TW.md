@@ -5,12 +5,12 @@
 </p>
 
 <p align="center">
-  <a href="./README.md">简体中文</a> | <a href="./README.en.md">English</a> | <b>繁體中文</b> | <a href="./README.ja.md">日本語</a> | <a href="./README.ru.md">Русский</a>
+  <a href="./README.md">English</a> | <a href="./README.zh-CN.md">简体中文</a> | <b>繁體中文</b> | <a href="./README.ja.md">日本語</a> | <a href="./README.ru.md">Русский</a>
 </p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Chrome-Manifest_V3-4285F4?logo=googlechrome&logoColor=white" alt="Manifest V3">
-  <img src="https://img.shields.io/badge/Version-1.0.1-00C7B7" alt="Version">
+  <img src="https://img.shields.io/badge/Version-1.2.1-00C7B7" alt="Version">
   <img src="https://img.shields.io/badge/License-Apache--2.0-blue.svg" alt="License">
   <img src="https://img.shields.io/badge/PRs-Welcome-brightgreen.svg" alt="PRs Welcome">
 </p>
@@ -86,7 +86,7 @@
 ## 🚀 安裝使用指南（Chrome / Edge）
 
 ### 1. 從發布包直接安裝
-1. 前往 GitHub 倉庫的 [Releases](../../releases) 頁面，下載最新的 `Web2MD-FeedAI-v1.0.1.zip`；
+1. 前往 GitHub 倉庫的 [Releases](../../releases) 頁面，下載最新的 `Web2MD-FeedAI-v1.2.1.zip`；
 2. 開啟 Chrome 瀏覽器，存取擴充功能管理頁面：`chrome://extensions/`（Edge 存取：`edge://extensions/`）；
 3. 開啟右上角 **「開發人員模式 (Developer mode)」** 開關；
 4. 將下載的 ZIP 解壓縮，點擊 **「載入未打包項目 (Load unpacked)」** 並選取解壓後的資料夾；

@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Web2MD-FeedAI - AI 网页转 Markdown",
   "description": "一键转换网页选区或整页为专为 AI 优化的高质量 Markdown，支持右侧原生边栏、一键复制与 Token 统计。",
-  "version": "1.0.1",
+  "version": "1.2.1",
   "permissions": [
     "activeTab",
     "storage",

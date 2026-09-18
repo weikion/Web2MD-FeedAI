@@ -34,10 +34,10 @@ export const TRANSLATIONS = {
     char_count: '{count} 字符',
     token_count: '~{count} Tokens',
     float_copy: '复制 MD',
-    float_panel: '打开侧边栏 ↗',
-    float_panel_title: '在右侧边栏打开',
+    float_panel: '打开侧栏 ↗',
+    float_panel_title: '在右侧侧边栏打开',
     toast_copied_selection: '已复制 Markdown',
-    toast_copied_page: '已提取整页正文 Markdown',
+    hint_refresh_article: '页面已切换，点击此处刷新提取正文',
     unsupported_page: 'Web2MD-FeedAI 无法在此受保护的浏览器内置页面中运行，请在普通网页中使用。'
   },
   'en': {
@@ -71,7 +71,7 @@ export const TRANSLATIONS = {
     float_panel: 'SidePanel ↗',
     float_panel_title: 'Open in SidePanel',
     toast_copied_selection: 'Markdown Copied',
-    toast_copied_page: 'Article Markdown Extracted',
+    hint_refresh_article: 'Page changed. Click to refresh article',
     unsupported_page: 'Web2MD-FeedAI cannot run on protected browser internal pages. Please use on standard webpages.'
   },
   'zh-TW': {
@@ -105,7 +105,7 @@ export const TRANSLATIONS = {
     float_panel: '打開側邊欄 ↗',
     float_panel_title: '在右側邊欄打開',
     toast_copied_selection: '已複製 Markdown',
-    toast_copied_page: '已擷取全頁正文 Markdown',
+    hint_refresh_article: '頁面已切換，點擊此處重新整理擷取正文',
     unsupported_page: 'Web2MD-FeedAI 無法在此受保護的瀏覽器內建頁面中執行，請在一般網頁中使用。'
   },
   'ja': {
@@ -139,7 +139,7 @@ export const TRANSLATIONS = {
     float_panel: 'サイドバー ↗',
     float_panel_title: 'サイドパネルで開く',
     toast_copied_selection: 'Markdownをコピーしました',
-    toast_copied_page: '記事Markdownを抽出しました',
+    hint_refresh_article: 'ページが変更されました。クリックして本文を更新',
     unsupported_page: 'Web2MD-FeedAIはブラウザの内部保護ページでは動作しません。通常のWebページでご利用ください。'
   },
   'ru': {
@@ -173,7 +173,7 @@ export const TRANSLATIONS = {
     float_panel: 'Панель ↗',
     float_panel_title: 'Открыть в боковой панели',
     toast_copied_selection: 'Markdown скопирован',
-    toast_copied_page: 'Статья скопирована в Markdown',
+    hint_refresh_article: 'Страница изменена. Нажмите для обновления статьи',
     unsupported_page: 'Web2MD-FeedAI не может работать на защищенных внутренних страницах браузера. Используйте на обычных веб-страницах.'
   }
 };

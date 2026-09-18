@@ -43,7 +43,39 @@ const toggleFrontmatterLabel = document.getElementById('toggle-frontmatter-label
 const viewRawBtn = document.getElementById('view-raw');
 const viewPreviewBtn = document.getElementById('view-preview');
 
+const refreshBubble = document.getElementById('refresh-bubble');
+const bubbleClose = document.getElementById('bubble-close');
+let bubbleTimeout = null;
+
 let sidepanelPort = null;
+
+/**
+ * Show refresh hint bubble above refresh button
+ */
+function showRefreshBubble() {
+  if (currentMode !== 'article') return;
+  if (!refreshBubble) return;
+
+  refreshBubble.classList.remove('hidden');
+
+  if (bubbleTimeout) clearTimeout(bubbleTimeout);
+  bubbleTimeout = setTimeout(() => {
+    hideRefreshBubble();
+  }, 12000);
+}
+
+/**
+ * Hide refresh hint bubble
+ */
+function hideRefreshBubble() {
+  if (refreshBubble) {
+    refreshBubble.classList.add('hidden');
+  }
+  if (bubbleTimeout) {
+    clearTimeout(bubbleTimeout);
+    bubbleTimeout = null;
+  }
+}
 
 /**
  * Initialize SidePanel
@@ -95,6 +127,7 @@ function handleIncomingSelection(data) {
   currentMode = 'selection';
   tabSelection.classList.add('active');
   tabArticle.classList.remove('active');
+  hideRefreshBubble();
 
   // Cache selection HTML, text, and markdown detection status
   rawHtmlCache.selectionHtml = data.html || '';
@@ -198,8 +231,24 @@ function bindEvents() {
   tabSelection.addEventListener('click', () => switchMode('selection'));
   tabArticle.addEventListener('click', () => switchMode('article'));
 
+  // Bubble events
+  if (bubbleClose) {
+    bubbleClose.addEventListener('click', (e) => {
+      e.stopPropagation();
+      hideRefreshBubble();
+    });
+  }
+  if (refreshBubble) {
+    refreshBubble.addEventListener('click', async () => {
+      hideRefreshBubble();
+      await refreshActiveTab();
+      await fetchContentForCurrentMode(true);
+    });
+  }
+
   // Refresh
   btnRefresh.addEventListener('click', async () => {
+    hideRefreshBubble();
     await refreshActiveTab();
     await fetchContentForCurrentMode(true);
   });
@@ -243,9 +292,11 @@ function bindEvents() {
   // Listen for tab switch in browser
   chrome.tabs.onActivated.addListener(async () => {
     await refreshActiveTab();
-    // Auto check if new tab has selection
+    // Auto check if new tab has selection in selection mode, or prompt refresh in article mode
     if (currentMode === 'selection') {
       fetchContentForCurrentMode(false);
+    } else if (currentMode === 'article') {
+      showRefreshBubble();
     }
   });
 
@@ -254,6 +305,9 @@ function bindEvents() {
     if (currentActiveTab && tabId === currentActiveTab.id) {
       if (changeInfo.title || changeInfo.url || changeInfo.status === 'complete') {
         refreshActiveTab();
+        if (currentMode === 'article' && (changeInfo.url || changeInfo.status === 'complete')) {
+          showRefreshBubble();
+        }
       }
     }
   });
@@ -308,6 +362,7 @@ async function refreshActiveTab() {
  * Switch mode: selection / article
  */
 async function switchMode(mode) {
+  hideRefreshBubble();
   if (currentMode === mode && editor.value.trim()) return;
   currentMode = mode;
 

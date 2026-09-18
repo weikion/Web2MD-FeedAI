@@ -219,45 +219,6 @@ async function convertSelectionAndCopy(includeMetadata) {
   return success;
 }
 
-/**
- * Convert whole page article and copy/sync
- */
-async function convertPageAndCopy(includeMetadata) {
-  const data = getPageData();
-
-  let metaPref = false;
-  try {
-    const prefs = await chrome.storage.local.get(['includeMetadata']);
-    if (prefs.includeMetadata !== undefined) metaPref = prefs.includeMetadata;
-  } catch (_) {}
-
-  const useMetadata = includeMetadata !== undefined ? includeMetadata : metaPref;
-
-  const markdown = htmlToMarkdown(data.html, {
-    baseUrl: data.url,
-    title: data.title,
-    sourceUrl: data.url,
-    includeMetadata: useMetadata
-  });
-
-  const stats = countTokensAndChars(markdown);
-  const success = await copyToClipboard(markdown);
-
-  if (success) {
-    showToast(t('toast_copied_page'), `${t('char_count', { count: stats.chars })} · ${t('token_count', { count: stats.estimatedTokens })}`);
-
-    chrome.storage.local.set({
-      latestMarkdown: markdown,
-      latestSource: {
-        type: 'page',
-        title: data.title,
-        url: data.url,
-        timestamp: Date.now()
-      }
-    });
-  }
-  return success;
-}
 
 let selectionSeq = 0;
 
@@ -461,15 +422,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     const selection = window.getSelection();
     if (selection && selection.rangeCount > 0 && !selection.isCollapsed && selection.toString().trim()) {
       convertSelectionAndCopy(message.includeMetadata || false).then(sendResponse);
-      return true;
-    }
-    return false;
-  }
-
-  if (message.type === 'TRIGGER_PAGE_CONVERT') {
-    // Only top-level window extracts full page article
-    if (window.self === window.top) {
-      convertPageAndCopy(message.includeMetadata !== false).then(sendResponse);
       return true;
     }
     return false;

@@ -3,7 +3,7 @@ import { resolve } from 'path';
 import fs from 'fs';
 
 async function runBuild() {
-  console.log('🚀 Starting CopyToMD Extension Build...');
+  console.log('🚀 Starting Web2MD-FeedAI Extension Build...');
 
   const distDir = resolve('dist');
 
@@ -64,7 +64,7 @@ async function runBuild() {
       emptyOutDir: false,
       lib: {
         entry: resolve('src/content/index.js'),
-        name: 'CopyToMDContent',
+        name: 'Web2MDFeedAIContent',
         formats: ['iife'],
         fileName: () => 'content.js'
       }
@@ -90,7 +90,7 @@ async function runBuild() {
     fs.copyFileSync(resolve(publicIconsDir, file), resolve(distIconsDir, file));
   }
 
-  console.log('✅ CopyToMD Extension build completed successfully in ./dist !');
+  console.log('✅ Web2MD-FeedAI Extension build completed successfully in ./dist !');
 }
 
 runBuild().catch((err) => {

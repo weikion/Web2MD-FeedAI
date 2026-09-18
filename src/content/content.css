@@ -1,4 +1,4 @@
-/* CopyToMD In-page Floating Tooltip and Toast Styles */
+/* Web2MD-FeedAI In-page Floating Tooltip and Toast Styles */
 
 #copytomd-floating-btn {
   position: absolute;
@@ -120,6 +120,7 @@
     opacity: 0;
     transform: translateY(6px) scale(0.95);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -131,6 +132,7 @@
     opacity: 0;
     transform: translateY(16px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);

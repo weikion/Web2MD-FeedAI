@@ -1,5 +1,5 @@
 /**
- * CopyToMD Background Service Worker (Manifest V3)
+ * Web2MD-FeedAI Background Service Worker (Manifest V3)
  */
 
 // Enable open side panel when clicking the extension action icon
@@ -18,12 +18,6 @@ chrome.runtime.onInstalled.addListener(() => {
   });
 
   chrome.contextMenus.create({
-    id: 'convert-page-md',
-    title: '转换整页正文为 Markdown',
-    contexts: ['page']
-  });
-
-  chrome.contextMenus.create({
     id: 'open-sidepanel',
     title: '打开 Web2MD-FeedAI 侧边栏',
     contexts: ['all']
@@ -38,10 +32,7 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
     await openSidePanel(tab.id);
   } else if (info.menuItemId === 'copy-selection-md') {
     await openSidePanel(tab.id);
-    chrome.tabs.sendMessage(tab.id, { type: 'TRIGGER_SELECTION_CONVERT' }).catch(() => {});
-  } else if (info.menuItemId === 'convert-page-md') {
-    await openSidePanel(tab.id);
-    chrome.tabs.sendMessage(tab.id, { type: 'TRIGGER_PAGE_CONVERT' }).catch(() => {});
+    chrome.tabs.sendMessage(tab.id, { type: 'TRIGGER_SELECTION_CONVERT' }).catch(() => { });
   }
 });
 

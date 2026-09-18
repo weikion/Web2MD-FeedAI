@@ -24,7 +24,7 @@ export function extractArticle(doc = document) {
       };
     }
   } catch (err) {
-    console.warn('[CopyToMD] Readability extraction failed, falling back to body cleanup:', err);
+    console.warn('[Web2MD-FeedAI] Readability extraction failed, falling back to body cleanup:', err);
   }
 
   // Fallback: extract from body directly removing scripts and styles

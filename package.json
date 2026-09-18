@@ -1,6 +1,6 @@
 {
   "name": "web2md-feedai",
-  "version": "1.0.1",
+  "version": "1.2.1",
   "description": "",
   "main": "index.js",
   "type": "module",
@@ -9,7 +9,9 @@
     "generate-icons": "node scripts/generate-icons.js",
     "dev": "node scripts/build.js",
     "build": "node scripts/build.js",
-    "package": "npm run build && node scripts/package.js"
+    "package": "npm run build && node scripts/package.js",
+    "site": "vite docs --port 5173",
+    "site:build": "vite build docs --outDir dist-site"
   },
   "dependencies": {
     "@mozilla/readability": "^0.6.0",
